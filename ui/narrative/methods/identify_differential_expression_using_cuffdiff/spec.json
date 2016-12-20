@@ -1,0 +1,192 @@
+{
+  "ver" : "1.0.0",
+  "authors" : [ ],
+  "contact" : "help@kbase.us",
+  "visible" : true,
+  "categories" : ["active","expression"],
+  "widgets" : {
+    "input" : null,
+    "output" : "kbaseRNASeqAnalysisNew"
+  },
+   "parameters" : [ {
+    "id" : "expressionset_id",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseRNASeq.RNASeqExpressionSet" ]
+    }
+  },{
+    "id" : "output_obj_name",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseRNASeq.RNASeqDifferentialExpression"],
+      "is_output_name": true
+    }
+  }, {
+    "id" : "num_threads",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "2" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+  }, {
+    "id" : "min_alignment_count",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "10" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+ }, {
+    "id" : "time_series",
+    "optional":true,
+    "advanced":true,
+    "allow_multiple":false,
+    "default_values":[""],
+    "field_type" : "checkbox",
+    "checkbox_options":{
+      "checked_value": 1,
+      "unchecked_value": 0
+    }
+  }, {
+    "id" : "multi_read_correct",
+    "optional":true,
+    "advanced":true,
+    "allow_multiple":false,
+    "default_values":[""],
+    "field_type" : "checkbox",
+    "checkbox_options":{
+      "checked_value": 1,
+      "unchecked_value": 0
+    }
+ }, {
+    "id" : "labels",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : true,
+    "default_values" : [ "" ],
+    "field_type" : "text"
+    }, {
+    "id" : "library_type",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "fr-unstranded" ],
+    "field_type" : "dropdown",
+    "dropdown_options":{
+      "options": [
+        {
+          "value": "fr-unstranded",
+          "display": "Standard Illumina"
+        },
+        {
+          "value": "fr-firststrand",
+          "display": "Only sequenced for single end reads"
+        },
+        {
+          "value": "fr-secondstrand",
+          "display": "Directional Illumina"
+        }
+     ]
+    }
+    }, {
+   "id" : "library_norm_method",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "classic-fpkm" ],
+    "field_type" : "dropdown",
+    "dropdown_options":{
+      "options": [
+        {
+          "value": "classic-fpkm",
+          "display": "no scaling to FPKM"
+        },
+        {
+          "value": "geometric",
+          "display": "geometric"
+        },
+        {
+          "value": "quartile",
+          "display": "quartile"
+        }
+     ]
+    }
+    } ],
+  "behavior" : {
+    "service-mapping" : {
+      "url" : "",
+      "name" : "KBaseRNASeq",
+      "method" : "CuffdiffCall",
+      "input_mapping" : [
+        {
+          "narrative_system_variable": "workspace",
+          "target_property" : "ws_id"
+        },
+        {
+          "input_parameter" : "expressionset_id",
+          "target_property" : "expressionset_id"
+        },
+        {
+          "input_parameter" : "output_obj_name",
+          "target_property" : "output_obj_name"
+        },
+        {
+          "input_parameter" : "num_threads",
+          "target_property" : "num_threads"
+        },
+        {
+          "input_parameter" : "time_series",
+          "target_property" : "time_series"
+        },
+        {
+          "input_parameter" : "multi_read_correct",
+          "target_property" : "multi_read_correct"
+        },
+        {
+          "input_parameter" : "min_alignment_count",
+          "target_property" : "min_alignment_count"
+        },
+       {
+          "input_parameter" : "labels",
+          "target_property" : "labels"
+        },
+        {
+          "input_parameter" : "library_type",
+          "target_property" : "library_type"
+        },
+        {
+          "input_parameter" : "library_norm_method",
+          "target_property" : "library_norm_method"
+          
+      }],
+      "output_mapping" : [
+	{
+          "narrative_system_variable": "workspace",
+          "target_property" : "workspace"
+        },
+	{
+          "input_parameter" : "output_obj_name",
+          "target_property" : "output"
+        },
+	{
+      	 "service_method_output_path": [0],
+	 "target_property": "CuffdiffCall"
+	}
+      ]
+    }
+  },
+  "job_id_output_field" : "docker"
+}

@@ -1,0 +1,12 @@
+{	
+	"version":"1.1",
+	"method":"KBaseRNASeq.CufflinksCall",
+	"context": null,
+	"params":[ 	
+	{
+  	"ws_id": "srividya22:1456962933354",
+	"alignment_sample_id" : "SDK_test_ath_wt_tophat",
+	"annotation_gtf" : "Arabidopsis_annotation.gtf",
+	"output_obj_name" : "SDK_test_ath_wt_cufflinks"
+	}]	
+}

@@ -9,6 +9,8 @@ SPEC_FILE = KBaseRNASeq.spec
 
 GITCOMMIT := $(shell git rev-parse --short HEAD)
 TAGS := $(shell git tag --contains $(GITCOMMIT))
+DTAG = $(shell git tag -l [0-9][0-9][0-1][0-9][0-3][0-9][0-2][0-9][0-5][0-9]-* | tail -n1 | sed 's/^[0-9]\{10\}-//')
+
 
 TOP_DIR = $(shell python -c "import os.path as p; print p.abspath('../..')")
 
@@ -22,10 +24,10 @@ LBIN_DIR = bin
 
 EXECUTABLE_SCRIPT_NAME = run_$(MODULE_CAPS).sh
 
-default: compile-kb-module build-executable-script-python
+default: compile build-executable-script-python
 
-compile-kb-module:
-	kb-mobu compile $(SPEC_FILE) \
+compile:
+	kb-sdk compile $(SPEC_FILE) \
 		--out $(LIB_DIR) \
 		--pyclname biokbase.$(MODULE).$(MODULE_CAPS)Client \
 		--pysrvname biokbase.$(MODULE).$(MODULE_CAPS) \
@@ -50,15 +52,16 @@ else
 endif
 
 
+##
+# WARNING Hardcoded /kb/dev_container (shouldn't be this way...)
+#
 setup-local-dev-kb-py-libs:
 	touch lib/biokbase/__init__.py
 	touch lib/biokbase/$(MODULE)/__init__.py
 	rsync -vrh /kb/dev_container/modules/kbapi_common/lib/biokbase/* lib/biokbase/.
 	rsync -vrh /kb/dev_container/modules/auth/lib/biokbase/* lib/biokbase/.
-	rsync -vrh /kb/dev_container/modules/genome_util/lib/biokbase/* lib/biokbase/.
-		--exclude TestMathClient.pl --exclude TestPerlServer.sh \
-		--exclude *.bak* --exclude AuthConstants.pm
-
+	rsync -vrh /kb/dev_container/modules/handle_service/lib/biokbase/* lib/biokbase/.
+	rsync -vrh /kb/dev_container/modules/workspace_deluxe/lib/biokbase/* lib/biokbase/.
 
 clean:
 	rm -rfv $(LBIN_DIR)
@@ -78,15 +81,18 @@ TARGET ?= /kb/deployment
 
 deploy: deploy-scripts
 
-deploy-scripts: deploy-libs deploy-executable-script
+deploy-scripts: deploy-libs2 deploy-executable-script
 	bash $(DIR)/deps/pylib.sh
 
-deploy-service: deploy-libs deploy-executable-script deploy-service-scripts deploy-cfg
+deploy-service: deploy-libs2 deploy-executable-script deploy-service-scripts deploy-cfg
 
-deploy-libs:
+deploy-libs2:
+	kb-sdk install AssemblyUtil
 	@echo "Deploying libs to target: $(TARGET)"
 	mkdir -p $(TARGET)/lib/biokbase
 	rsync -vrh lib/biokbase/$(MODULE) $(TARGET)/lib/biokbase/.
+	rsync -vrh lib/AssemblyUtil $(TARGET)/lib/.
+	rsync -vrh lib/GenomeFileUtil $(TARGET)/lib/.
 
 deploy-executable-script:
 	@echo "Installing executable scripts to target: $(TARGET)/bin"
@@ -114,6 +120,7 @@ create-test-wrapper:
 	echo '#!/bin/bash' > test/script_test/run_tests.sh
 	echo 'export KB_RUNTIME=$(DEPLOY_RUNTIME)' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME) >> test/script_test/run_tests.sh
 	echo 'export PYTHONPATH="$(DIR)/$(LIB_DIR)"' >> test/script_test/run_tests.sh
+	echo 'export KB_DEPLOYMENT_CONFIG="$(DIR)/deploy.cfg"' >> test/script_test/run_tests.sh
 	echo 'python $(DIR)/test/script_test/basic_test.py $$1 $$2 $$3' \
 		>> test/script_test/run_tests.sh
 	chmod +x test/script_test/run_tests.sh
@@ -134,17 +141,23 @@ DEPLOY_RUNTIME ?= /kb/runtime
 TARGET ?= /kb/deployment
 #SERVICE_DIR ?= $(TARGET)/services/$(MODULE)
 
-deploy: deploy-scripts deploy-cfg
+deploy: deploy-lscripts deploy-cfg
+	
 
-deploy-scripts: deploy-libs deploy-executable-script
+deploy-ensure-dirs:
+	if [ ! -d $(TARGET)/shbin ]; then rm -rf $(TARGET)/shbin; mkdir -p $(TARGET)/shbin; fi
+
+deploy-lscripts: deploy-ensure-dirs deploy-libs2 deploy-executable-script deploy-scripts
 	bash $(DIR)/deps/pylib.sh
 
-deploy-service: deploy-libs deploy-executable-script deploy-service-scripts deploy-cfg
+deploy-service: deploy-libs2 deploy-executable-script deploy-service-scripts deploy-cfg
 
-deploy-libs:
+deploy-libs2:
 	@echo "Deploying libs to target: $(TARGET)"
 	mkdir -p $(TARGET)/lib/biokbase
 	rsync -vrh lib/biokbase/$(MODULE) $(TARGET)/lib/biokbase/.
+	rsync -vrh lib/AssemblyUtil $(TARGET)/lib/.
+	rsync -vrh lib/GenomeFileUtil $(TARGET)/lib/.
 
 deploy-executable-script:
 	@echo "Installing executable scripts to target: $(TARGET)/bin"
@@ -152,7 +165,7 @@ deploy-executable-script:
 	echo 'export KB_RUNTIME=$(DEPLOY_RUNTIME)' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
 	echo 'export PYTHONPATH="$(TARGET)/lib"' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
 	echo 'export KB_SERVICE_NAME="$(MODULE_CAPS)"' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
-	echo 'export KB_DEPLOYMENT_CONFIG="$(KB_DEPLOYMENT_CONFIG)"' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
+	echo 'export KB_DEPLOYMENT_CONFIG="$(DIR)/deploy.cfg"' >> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
 	echo 'python $(TARGET)/lib/biokbase/$(MODULE)/$(MODULE_CAPS).py $$1 $$2 $$3' \
 		>> $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
 	chmod +x $(TARGET)/bin/$(EXECUTABLE_SCRIPT_NAME)
@@ -175,9 +188,10 @@ create-test-wrapper:
 	echo 'export KB_RUNTIME=$(DEPLOY_RUNTIME)' >> test/script_test/run_tests.sh
 	echo 'export PYTHONPATH="$(TARGET)/lib"' >> test/script_test/run_tests.sh
 	echo 'export KB_SERVICE_NAME="$(MODULE_CAPS)"' >> test/script_test/run_tests.sh
-	echo 'export KB_DEPLOYMENT_CONFIG="$(KB_DEPLOYMENT_CONFIG)"' >> test/script_test/run_tests.sh
+	echo 'export KB_DEPLOYMENT_CONFIG="$(DIR)/deploy.cfg"' >> test/script_test/run_tests.sh
 	echo 'python $(DIR)/test/script_test/basic_test.py $$1 $$2 $$3' \
 		>> test/script_test/run_tests.sh
 	chmod +x test/script_test/run_tests.sh
 
 endif
+

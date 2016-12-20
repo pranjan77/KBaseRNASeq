@@ -1,0 +1,9 @@
+{	
+	"version":"1.1",
+	"method":"KBaseRNASeq.GetFeaturesToGTF",
+	"context": null,
+	"params":[
+	{"ws_id" : "kbasetest:1462219104503",
+	 "output_obj_name" :  "Escherichia_Reference_Annotation" ,
+	 "reference" : "Escherichia_coli_str_K-12_substr_MG1655" } ]
+}

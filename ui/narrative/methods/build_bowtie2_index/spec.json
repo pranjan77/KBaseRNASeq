@@ -2,11 +2,11 @@
   "ver" : "1.0.0",
   "authors" : [ ],
   "contact" : "help@kbase.us",
-  "visble" : true,
-  "categories" : ["active"],
+  "visible" : true,
+  "categories" : ["active","expression","sequence"],
   "widgets" : {
     "input" : null,
-    "output" : "null"
+    "output" : "no-display"
   },
   "parameters" : [ {
     "id" : "input_genome",
@@ -16,7 +16,7 @@
     "default_values" : [ "" ],
     "field_type" : "text",
     "text_options" : {
-      "valid_ws_types" : [ "KBaseGenomes.ContigSet" ]
+      "valid_ws_types" : ["KBaseGenomes.Genome"]
     }
   }, {
     "id" : "out_index_name",
@@ -24,7 +24,11 @@
     "advanced" : false,
     "allow_multiple" : false,
     "default_values" : [ "" ],
-    "field_type" : "text"
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseRNASeq.Bowtie2Indexes"],
+      "is_output_name": true
+    }
   } ],
   "behavior" : {
       "service-mapping" : {
@@ -44,9 +48,21 @@
         }],
      "output_mapping" : [
         {
-         "service_method_output_path": [0],
-         "target_property": "BuildBowtie2Index"
-        }
+         "service_method_output_path": [0,"report_name"],
+         "target_property": "report_name"
+        },
+	{
+	 "service_method_output_path": [0,"report_ref"],
+	 "target_property": "report_ref"
+	},
+	{
+	 "narrative_system_variable": "workspace",
+	 "target_property": "workspace_name"
+	},
+	{
+	"constant_value": "5",
+	"target_property": "report_window_line_height"
+	}
       ]
     }
   },

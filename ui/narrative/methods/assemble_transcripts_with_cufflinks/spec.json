@@ -1,0 +1,105 @@
+{
+  "ver" : "1.0.0",
+  "authors" : [ ],
+  "contact" : "help@kbase.us",
+  "visible" : true,
+  "categories" : ["active","expression","assembly"],
+  "widgets" : {
+    "input" : null,
+    "output" : "kbaseExpressionSampleTableNew"
+  },
+   "parameters" : [ {
+    "id" : "alignmentset_id",
+    "optional" : false,
+    "advanced" : false,
+    "allow_multiple" : false,
+    "default_values" : [ "" ],
+    "field_type" : "text",
+    "text_options" : {
+      "valid_ws_types" : ["KBaseRNASeq.RNASeqAlignmentSet" , "KBaseRNASeq.RNASeqAlignment" ]
+    }
+  }, {
+   "id" : "num_threads",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "2" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+  }, {
+   "id" : "min_intron_length",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "50" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+  }, {
+    "id" : "max_intron_length",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "300000" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+  }, {
+    "id" : "overhang_tolerance",
+    "optional" : true,
+    "advanced" : true,
+    "allow_multiple" : false,
+    "default_values" : [ "8" ],    
+    "field_type" : "text",
+    "text_options" : {
+      "validate_as": "int"
+    }
+  } ],
+  "behavior" : {
+    "service-mapping" : {
+      "url" : "",
+      "name" : "KBaseRNASeq",
+      "method" : "CufflinksCall",
+      "input_mapping" : [
+        {
+          "narrative_system_variable": "workspace",
+          "target_property" : "ws_id"
+        },
+        {
+          "input_parameter" : "alignmentset_id",
+          "target_property" : "alignmentset_id"
+        },
+        {
+          "input_parameter" : "num_threads",
+          "target_property" : "num_threads"
+        },
+        {
+          "input_parameter" : "min_intron_length",
+          "target_property" : "min_intron_length"
+        },
+        {
+          "input_parameter" : "max_intron_length",
+          "target_property" : "max_intron_length"
+        },
+        {
+          "input_parameter" : "overhang_tolerance",
+          "target_property" : "overhang_tolerance"
+      }],
+      "output_mapping" : [
+	{
+         "service_method_output_path": [0,"output"],
+         "target_property": "output"
+        },
+        {
+         "service_method_output_path": [0,"workspace"],
+         "target_property": "workspace"
+        }
+      ]
+    }
+  },
+  "job_id_output_field" : "docker"
+}

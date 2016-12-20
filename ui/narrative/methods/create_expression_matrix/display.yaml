@@ -1,0 +1,56 @@
+#
+# Define basic display information
+#
+name     : Create Expression Matrix
+
+tooltip  : |
+    This method creates the expression matrix for a given RNA-seq differential expression data obtained from Cuffdiff.
+screenshots :
+    []
+
+#
+# Define the set of other narrative methods that should be suggested to the user.
+#
+method-suggestions :
+    related :
+        []
+    next :
+        []
+
+
+#
+# Configure the display and description of the parameters
+#
+parameters :
+    rnaseq_exp_details :
+        ui-name : |
+            Differentailly expressed data from Cuffdiff
+        short-hint : |
+            Cuffdiff output is used as an input
+    output_obj_name :
+        ui-name : |
+            Expression Matrix
+        short-hint : |
+            Provide the name of expression matrix
+description : |
+    <p>This method allows to create the expression matrix for a given RNA-seq differentially expressed data obtained from Cuffdiff.</p>
+      <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
+    Srividya Ramakrishnan, Sunita Kumari, Shinjae Yoo, Priya Ranjan, Jim Thomason, Vivek Kumar</p>
+    
+publications :
+    -
+        display-text: |
+            Trapnell C, Roberts A, Goff L, Pertea G, Kim D, Kelley DR, Pimentel H, Salzberg SL, Rinn JL, Pachter, L (2012) Differential gene and transcript expression analysis of RNA-seq experiments with TopHat and Cufflinks. Nature Protocols, 7(3), 562–578.
+        link: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3334321/
+    -
+        display-text: |
+            Trapnell C, Pachter L, Salzberg SL. (2009) TopHat: discovering splice junctions with RNA-Seq. Bioinformatics. Vol 25, 9:1105-1111.
+        link: http://bioinformatics.oxfordjournals.org/content/25/9/1105.abstract
+    -
+        display-text: |
+            Kim D, Pertea G, Trapnell C, Pimentel H, Kelley R, Salzberg SL (2013) TopHat2: accurate alignment of transcriptomes in the presence of insertions, deletions and gene fusions. Genome Biology. 14:R36
+        link: http://www.genomebiology.com/2013/14/4/R36/abstract
+    -    
+        display-text: |
+            Langmead B, Trapnell C, Pop M, Salzberg SL (2009) Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome Biology 10:R25.
+        link: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690996/

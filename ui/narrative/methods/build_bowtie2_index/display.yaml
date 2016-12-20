@@ -3,12 +3,14 @@
 #
 name     : Build Bowtie2 Index 
 tooltip  : |
-    Build bowtie2 Index for a genome object
+    Build Bowtie2 index for a given genome
 
 screenshots :
     []
 
-replacement-text : Created a new bowtie2 Index  for {{{input_genome}}}
+icon: bowtie-cyan.png
+
+replacement-text : Creates a new bowtie2 Index  for {{{input_genome}}}
 
 #
 # Define the set of other narrative methods that should be suggested to the user.
@@ -34,15 +36,30 @@ parameters :
         ui-name : |
             Genome
         short-hint : |
-            Select a reference genome 
+            The input genome to be indexed 
 
     out_index_name:
         ui-name : |
-            output
+            Bowtie2 Index
         short-hint : |
-            Enter a name for the output index object
+            The indexed genome as an output
 
 description : |
-   This method is used to create the Bowtie2 Indexes for a reference genome object
+   <p>This method builds the Bowtie2 index for a given reference genome.</p> 
    
+   <p>Bowtie2 indexes the sequences in the reference genome using a scheme based on the Burrows-Wheeler transform (BWT) and the full-text minute-space (FM) index (similar to a suffix array) to keep its memory footprint small.</p>
+   
+   <p><strong>Team members who developed & deployed algorithm in KBase:</strong>
+    Srividya Ramakrishnan, Sunita Kumari, Shinjae Yoo, Priya Ranjan, Jim Thomason, Vivek Kumar</p>
     
+publications :
+    -
+        display-text: |
+            Langmead B, Trapnell C, Pop M, Salzberg SL (2009) "Ultrafast and memory-efficient alignment of short DNA sequences to the human genome" Genome Biology 10 (3): 10:R25.
+        link: http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2690996/
+        display-text: |
+            Langmead B, Salzberg SL (2012) "Fast gapped-read alignment with Bowtie 2" Nature Methods 9 (4): 357–359.
+        link: http://www.ncbi.nlm.nih.gov/pubmed/22388286
+        display-text: |
+            Karkkainen J (2007) "Fast BWT in small space by blockwise suffix sorting" Theor Comput Sci 2007, 387:249-257.
+        link: http://www.sciencedirect.com/science/article/pii/S0304397507005245

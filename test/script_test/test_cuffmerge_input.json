@@ -1,0 +1,11 @@
+{	
+	"version":"1.1",
+	"method":"KBaseRNASeq.CuffmergeCall",
+	"context": null,
+	"params":[ 	
+	{
+  	"ws_id": "srividya22:1456962933354",
+	"analysis" : "Athaliana_sdk_test_exp",
+	"output_obj_name" : "SDK_ath_test_cuffmerge"
+	}]	
+}
